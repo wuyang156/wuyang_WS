@@ -24,10 +24,7 @@
             <geometry>
                 <box size="4.8 1.76 2.16"/>
             </geometry>
-            <material name="">
-                <color rgba="1.0 0.0 0.0 1.0"/>
-                <texture filename=""/>
-            </material>
+            <material name="sliver"/>
         </visual>
         <collision>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -36,4 +33,12 @@
             </geometry>
         </collision>
     </link>
+
+    <joint name="joint_name" type="fixed">
+        <origin xyz="0.0 0.0 1.12" rpy="0.0 0.0 0.0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
 </robot>
