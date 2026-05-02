@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!-- 宏定义：前轮转向系统 -->
+<xacro:macro name="front_steering_wheel" params="prefix y_reflect">
+    
+</xacro:macro>
+
+
+
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wuyang_arkermann">
     <!-- 定义颜色材质 -->
     <material name="black">
