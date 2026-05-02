@@ -29,20 +29,20 @@
         <visual name="RectangularPrism">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <box size="4.8 1.76 2.16"/>
+                <box size="0.265 0.11 0.123"/>
             </geometry>
             <material name="sliver"/>
         </visual>
         <collision>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <box size="4.8 1.76 2.16"/>
+                <box size="0.265 0.11 0.123"/>
             </geometry>
         </collision>
     </link>
 
     <joint name="joint_name" type="fixed">
-        <origin xyz="0.0 0.0 1.12" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.0 0.0 0.0765" rpy="0.0 0.0 0.0"/>
         <parent link="base_footprint"/>
         <child link="base_link"/>
         <axis xyz="0.0 0.0 0.0"/>
