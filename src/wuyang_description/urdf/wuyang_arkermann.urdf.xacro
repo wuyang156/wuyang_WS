@@ -1,10 +1,4 @@
 <?xml version="1.0"?>
-<!-- 宏定义：前轮转向系统 -->
-<xacro:macro name="front_steering_wheel" params="prefix y_reflect">
-    
-</xacro:macro>
-
-
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wuyang_arkermann">
     <!-- 定义颜色材质 -->
@@ -48,4 +42,59 @@
         <axis xyz="0.0 0.0 0.0"/>
         <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
     </joint>
+
+    <!-- 宏定义：前轮转向系统 -->
+    <xacro:macro name="front_steering_wheel" params="prefix y_reflect">
+        <!-- 转向节（knuckle）：连接转向关节和滚动关节的中间连杆 -->
+        <link name="${prefix}_knuckle">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.05"/>
+                <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/>
+            </inertial>
+        </link>
+
+        <!-- 转向关节：base_link → 转向节，绕Z轴旋转实现转向 -->
+        <joint name="${prefix}_steering_joint" type="revolute">
+            <origin xyz="0.072 ${0.079 * y_reflect} -0.0425" rpy="0.0 0.0 0.0"/>
+            <parent link="base_link"/>
+            <child link="${prefix}_knuckle"/>
+            <axis xyz="0.0 0.0 1.0"/>
+            <limit lower="-0.6055" upper="0.6055" effort="10.0" velocity="10.0"/>
+        </joint>
+
+        <!-- 轮子 -->
+        <link name="${prefix}_wheel">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.1"/>
+                <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+            </inertial>
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.026"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.026"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- 滚动关节：转向节 → 轮子，绕Y轴连续旋转 -->
+        <joint name="${prefix}_rolling_joint" type="continuous">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <parent link="${prefix}_knuckle"/>
+            <child link="${prefix}_wheel"/>
+            <axis xyz="0.0 1.0 0.0"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- 实例化左右前轮 -->
+    <xacro:front_steering_wheel prefix="left_front" y_reflect="1"/>
+    <xacro:front_steering_wheel prefix="right_front" y_reflect="-1"/>
 </robot>
