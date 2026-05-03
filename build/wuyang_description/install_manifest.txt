@@ -1,5 +1,8 @@
+/home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/urdf/wuyang_arkermann.pdf
 /home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/urdf/sensor_camera.urdf.xacro
+/home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/urdf/full.urdf
 /home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/urdf/wuyang_arkermann.urdf.xacro
+/home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/urdf/wuyang_arkermann.gv
 /home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/urdf/sensor_laser.urdf.xacro
 /home/wuyang/wuyang_WS/install/wuyang_description/share/wuyang_description/launch/display.launch.py
 /home/wuyang/wuyang_WS/install/wuyang_description/share/ament_index/resource_index/package_run_dependencies/wuyang_description
