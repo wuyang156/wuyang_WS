@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wuyang_arkermann">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wuyang_ackermann">
     <xacro:include filename="sensor_laser.urdf.xacro"/>
     <xacro:include filename="sensor_camera.urdf.xacro"/>
     <xacro:include filename="gazebo_control.urdf.xacro"/>

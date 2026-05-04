@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wuyang_ackermann">
+    <xacro:include filename="sensor_laser.urdf.xacro"/>
+    <xacro:include filename="sensor_camera.urdf.xacro"/>
+    <xacro:include filename="gazebo_control.urdf.xacro"/>
+
+    <!-- 定义颜色材质 -->
+    <material name="black">
+        <color rgba="0.0 0.0 0.0 1.0" />
+    </material>
+    <material name="blue">
+        <color rgba="0.2 0.2 0.8 1.0"/>
+    </material>
+    <material name="sliver">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+
+    <link name="base_footprint"/>
+
+    <link name="base_link">
+        <inertial>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <mass value="3.0"/>
+            <inertia ixx="0.0068" ixy="0.0" ixz="0.0" iyy="0.0213" iyz="0.0" izz="0.0206"/>
+        </inertial>
+        <visual name="RectangularPrism">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <box size="0.265 0.11 0.123"/>
+            </geometry>
+            <material name="sliver"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <box size="0.265 0.11 0.123"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="joint_name" type="fixed">
+        <origin xyz="0.0 0.0 0.0765" rpy="0.0 0.0 0.0"/>
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <!-- 宏定义：前轮转向系统 -->
+    <xacro:macro name="front_steering_wheel" params="prefix y_reflect">
+        <!-- 转向节（knuckle）：连接转向关节和滚动关节的中间连杆 -->
+        <link name="${prefix}_knuckle">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.0"/>
+                <inertia ixx="0.0000" ixy="0.0" ixz="0.0" iyy="0.0000" iyz="0.0" izz="0.0000"/>
+            </inertial>
+        </link>
+
+        <!-- 转向关节：base_link → 转向节，绕Z轴旋转实现转向 -->
+        <joint name="${prefix}_steering_joint" type="revolute">
+            <origin xyz="0.072 ${0.079 * y_reflect} -0.0425" rpy="0.0 0.0 0.0"/>
+            <parent link="base_link"/>
+            <child link="${prefix}_knuckle"/>
+            <axis xyz="0.0 0.0 1.0"/>
+            <limit lower="-0.6055" upper="0.6055" effort="10.0" velocity="10.0"/>
+        </joint>
+
+        <!-- 轮子 -->
+        <link name="${prefix}_wheel">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.1"/>
+                <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+            </inertial>
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.026"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.026"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- 滚动关节：转向节 → 轮子，绕Y轴连续旋转 -->
+        <joint name="${prefix}_rolling_joint" type="continuous">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <parent link="${prefix}_knuckle"/>
+            <child link="${prefix}_wheel"/>
+            <axis xyz="0.0 1.0 0.0"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- 宏定义：后轮（无转向，仅滚动） -->
+    <xacro:macro name="rear_wheel" params="prefix y_reflect">
+        <link name="${prefix}_wheel">
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.1"/>
+                <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+            </inertial>
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.026"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.026"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefix}_rolling_joint" type="continuous">
+            <origin xyz="-0.072 ${0.079 * y_reflect} -0.0425" rpy="0.0 0.0 0.0"/>
+            <parent link="base_link"/>
+            <child link="${prefix}_wheel"/>
+            <axis xyz="0.0 1.0 0.0"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- 实例化左右前轮 -->
+    <xacro:front_steering_wheel prefix="left_front" y_reflect="1"/>
+    <xacro:front_steering_wheel prefix="right_front" y_reflect="-1"/>
+
+    <!-- 实例化左右后轮 -->
+    <xacro:rear_wheel prefix="left_rear" y_reflect="1"/>
+    <xacro:rear_wheel prefix="right_rear" y_reflect="-1"/>
+
+    <!-- 实例化激光雷达 -->
+    <xacro:LS_p10m parent="base_link" xyz="0.059 0.0 0.109"/>
+
+    <!-- 实例化摄像头：camera_pitch_link 与车身前上方棱重合 -->
+    <xacro:GeminiPro_camera parent="base_link" xyz="0.1325 0.0 0.0615"/>
+
+    <!-- 实例化gazebo_control：包含ros2_control接口和gazebo插件 -->
+    <xacro:gazebo_control/>
+</robot>
