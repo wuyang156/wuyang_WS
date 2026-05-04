@@ -3,6 +3,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="wuyang_arkermann">
     <xacro:include filename="sensor_laser.urdf.xacro"/>
     <xacro:include filename="sensor_camera.urdf.xacro"/>
+    <xacro:include filename="gazebo_control.urdf.xacro"/>
 
     <!-- 定义颜色材质 -->
     <material name="black">
@@ -141,4 +142,7 @@
 
     <!-- 实例化摄像头：camera_pitch_link 与车身前上方棱重合 -->
     <xacro:GeminiPro_camera parent="base_link" xyz="0.1325 0.0 0.0615"/>
+
+    <!-- 实例化gazebo_control：包含ros2_control接口和gazebo插件 -->
+    <xacro:gazebo_control/>
 </robot>
