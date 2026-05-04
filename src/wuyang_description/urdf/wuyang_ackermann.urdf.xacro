@@ -144,5 +144,5 @@
     <xacro:GeminiPro_camera parent="base_link" xyz="0.1325 0.0 0.0615"/>
 
     <!-- 实例化gazebo_control：包含ros2_control接口和gazebo插件 -->
-    <!-- <xacro:gazebo_control/> -->
+    <xacro:gazebo_control/>
 </robot>
