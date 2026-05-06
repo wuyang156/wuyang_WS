@@ -1,8 +1,8 @@
 
 controller_manager:
   ros__parameters:
-    update_rate: 50
-    use_sim_time: true  
+    update_rate: 50  
+    use_sim_time: true
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -12,8 +12,8 @@ controller_manager:
 
 
 ackermann_controller:
-  ros__parameters:
-    use_sim_time: true 
+  ros__parameters: 
+    use_sim_time: true
 
     rear_wheels_names:
       - left_rear_rolling_joint

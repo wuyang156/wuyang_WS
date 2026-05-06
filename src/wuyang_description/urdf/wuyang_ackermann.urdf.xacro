@@ -5,7 +5,7 @@
     <xacro:include filename="sensor_camera.urdf.xacro"/>
     <xacro:include filename="gazebo_control.urdf.xacro"/>
 
-    <!-- 定义颜色材质 -->
+    <!-- Define color materials -->
     <material name="black">
         <color rgba="0.0 0.0 0.0 1.0" />
     </material>
@@ -47,18 +47,18 @@
         <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
     </joint>
 
-    <!-- 宏定义：前轮转向系统 -->
+    <!-- Macro: front wheel steering system -->
     <xacro:macro name="front_steering_wheel" params="prefix y_reflect">
-        <!-- 转向节（knuckle）：连接转向关节和滚动关节的中间连杆 -->
+        <!-- Steering knuckle: intermediate link connecting steering joint and rolling joint -->
         <link name="${prefix}_knuckle">
             <inertial>
                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-                <mass value="0.0"/>
-                <inertia ixx="0.0000" ixy="0.0" ixz="0.0" iyy="0.0000" iyz="0.0" izz="0.0000"/>
+                <mass value="0.1"/>
+                <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001"/>
             </inertial>
         </link>
 
-        <!-- 转向关节：base_link → 转向节，绕Z轴旋转实现转向 -->
+        <!-- Steering joint: base_link → knuckle, rotates around Z axis for steering -->
         <joint name="${prefix}_steering_joint" type="revolute">
             <origin xyz="0.072 ${0.079 * y_reflect} -0.0425" rpy="0.0 0.0 0.0"/>
             <parent link="base_link"/>
@@ -67,7 +67,7 @@
             <limit lower="-0.6055" upper="0.6055" effort="10.0" velocity="10.0"/>
         </joint>
 
-        <!-- 轮子 -->
+        <!-- Wheel -->
         <link name="${prefix}_wheel">
             <inertial>
                 <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -89,7 +89,7 @@
             </collision>
         </link>
 
-        <!-- 滚动关节：转向节 → 轮子，绕Y轴连续旋转 -->
+        <!-- Rolling joint: knuckle → wheel, continuous rotation around Y axis -->
         <joint name="${prefix}_rolling_joint" type="continuous">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <parent link="${prefix}_knuckle"/>
@@ -98,7 +98,7 @@
         </joint>
     </xacro:macro>
 
-    <!-- 宏定义：后轮（无转向，仅滚动） -->
+    <!-- Macro: rear wheel (no steering, rolling only) -->
     <xacro:macro name="rear_wheel" params="prefix y_reflect">
         <link name="${prefix}_wheel">
             <inertial>
@@ -129,20 +129,20 @@
         </joint>
     </xacro:macro>
 
-    <!-- 实例化左右前轮 -->
+    <!-- Instantiate left and right front wheels -->
     <xacro:front_steering_wheel prefix="left_front" y_reflect="1"/>
     <xacro:front_steering_wheel prefix="right_front" y_reflect="-1"/>
 
-    <!-- 实例化左右后轮 -->
+    <!-- Instantiate left and right rear wheels -->
     <xacro:rear_wheel prefix="left_rear" y_reflect="1"/>
     <xacro:rear_wheel prefix="right_rear" y_reflect="-1"/>
 
-    <!-- 实例化激光雷达 -->
+    <!-- Instantiate LiDAR -->
     <xacro:LS_p10m parent="base_link" xyz="0.059 0.0 0.109"/>
 
-    <!-- 实例化摄像头：camera_pitch_link 与车身前上方棱重合 -->
+    <!-- Instantiate camera: camera_pitch_link aligns with front top edge of chassis -->
     <xacro:GeminiPro_camera parent="base_link" xyz="0.1325 0.0 0.0615"/>
 
-    <!-- 实例化gazebo_control：包含ros2_control接口和gazebo插件 -->
+    <!-- Instantiate gazebo_control: includes ros2_control interfaces and gazebo plugin -->
     <xacro:gazebo_control/>
 </robot>

@@ -2,7 +2,7 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="gazebo_control">
 
-    <!-- 后轮控制接口宏：滚动速度控制 -->
+    <!-- Rear wheel control interface macro: rolling velocity control -->
     <xacro:macro name="rear_control_interface" params="prefix">
         <joint name="${prefix}_rolling_joint">
             <command_interface name="velocity">
@@ -14,7 +14,7 @@
         </joint>
     </xacro:macro>
 
-    <!-- 前轮控制接口宏：转向角度控制 -->
+    <!-- Front wheel control interface macro: steering angle control -->
     <xacro:macro name="front_control_interface" params="prefix">
         <joint name="${prefix}_steering_joint">
             <command_interface name="position">
@@ -25,6 +25,7 @@
         </joint>
     </xacro:macro>
 
+    <!-- Front wheel rolling interface macro: non-controlled, used to get front wheel pose from gazebo -->
     <xacro:macro name="front_rolling_interface" params="prefix">
         <joint name="${prefix}_rolling_joint">
             <state_interface name="velocity"/>
@@ -33,7 +34,15 @@
         
     </xacro:macro>
 
-    <!-- 主宏：gazebo_control -->
+    <!-- Camera pitch interface macro: non-controlled, used to get camera pose from gazebo -->
+    <xacro:macro name="camera_pitch">
+        <joint name="camera_mount_joint">   
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- Main macro: gazebo_control -->
     <xacro:macro name="gazebo_control" params="">
         <ros2_control name="GazeboSystem" type="system">
             <hardware>
@@ -44,6 +53,9 @@
             <xacro:rear_control_interface prefix="right_rear"/>
             <xacro:front_control_interface prefix="left_front"/>
             <xacro:front_control_interface prefix="right_front"/>
+            <xacro:front_rolling_interface prefix="left_front"/>
+            <xacro:front_rolling_interface prefix="right_front"/>
+            <xacro:camera_pitch/>
         </ros2_control>
 
         <gazebo>
@@ -51,7 +63,7 @@
                 <parameters>$(find wuyang_description)/config/ackermann_controller.yaml</parameters>
             </plugin>
         </gazebo>
-        
+
     </xacro:macro>
 
 </robot>
