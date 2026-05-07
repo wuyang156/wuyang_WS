@@ -3,19 +3,23 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
     pkg_share = get_package_share_directory("wuyang_description")
 
     ackermann_model_arg = DeclareLaunchArgument(
-        "arkemann_model",
+        "ackermann_model",
         default_value=PathJoinSubstitution([pkg_share, "urdf", "wuyang_ackermann.urdf.xacro"]),
         description="Absolute path to the URDF/xacro model file",
     )
 
-    robot_description_content = Command(
-        ["xacro ", LaunchConfiguration("ackermann_model")]
+    robot_description_content = ParameterValue(
+        Command(
+            ["xacro ", LaunchConfiguration("ackermann_model")]
+        ),
+        value_type=str
     )
 
     robot_state_publisher_node = Node(

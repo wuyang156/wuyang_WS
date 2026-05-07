@@ -36,7 +36,7 @@
 
     <!-- Camera pitch interface macro: non-controlled, used to get camera pose from gazebo -->
     <xacro:macro name="camera_pitch">
-        <joint name="camera_mount_joint">   
+        <joint name="camera_base_joint">   
             <state_interface name="position"/>
             <state_interface name="velocity"/>
         </joint>
