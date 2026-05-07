@@ -138,7 +138,7 @@
     <xacro:rear_wheel prefix="right_rear" y_reflect="-1"/>
 
     <!-- Instantiate LiDAR -->
-    <xacro:LS_p10m parent="base_link" xyz="0.059 0.0 0.109"/>
+    <xacro:LS_m10p parent="base_link" xyz="0.059 0.0 0.109"/>
 
     <!-- Instantiate camera: camera_pitch_link aligns with front top edge of chassis -->
     <xacro:GeminiPro_camera parent="base_link" xyz="0.1325 0.0 0.0615"/>

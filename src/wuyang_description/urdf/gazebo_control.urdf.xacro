@@ -43,7 +43,7 @@
     </xacro:macro>
 
     <!-- Main macro: gazebo_control -->
-    <xacro:macro name="gazebo_control" params="">
+    <xacro:macro name="gazebo_control">
         <ros2_control name="GazeboSystem" type="system">
             <hardware>
                 <plugin>gazebo_ros2_control/GazeboSystem</plugin>
