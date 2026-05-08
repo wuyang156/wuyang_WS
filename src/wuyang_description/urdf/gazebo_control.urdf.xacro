@@ -2,7 +2,6 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="gazebo_control">
 
-    <!-- Rear wheel control interface macro: rolling velocity control -->
     <xacro:macro name="rear_control_interface" params="prefix">
         <joint name="${prefix}_rolling_joint">
             <command_interface name="velocity">
@@ -14,7 +13,6 @@
         </joint>
     </xacro:macro>
 
-    <!-- Front wheel control interface macro: steering angle control -->
     <xacro:macro name="front_control_interface" params="prefix">
         <joint name="${prefix}_steering_joint">
             <command_interface name="position">
@@ -25,7 +23,6 @@
         </joint>
     </xacro:macro>
 
-    <!-- Front wheel rolling interface macro: non-controlled, used to get front wheel pose from gazebo -->
     <xacro:macro name="front_rolling_interface" params="prefix">
         <joint name="${prefix}_rolling_joint">
             <state_interface name="velocity"/>
@@ -34,7 +31,6 @@
         
     </xacro:macro>
 
-    <!-- Camera pitch interface macro: non-controlled, used to get camera pose from gazebo -->
     <xacro:macro name="camera_pitch">
         <joint name="camera_base_joint">   
             <state_interface name="position"/>
@@ -42,7 +38,6 @@
         </joint>
     </xacro:macro>
 
-    <!-- Main macro: gazebo_control -->
     <xacro:macro name="gazebo_control">
         <ros2_control name="GazeboSystem" type="system">
             <hardware>

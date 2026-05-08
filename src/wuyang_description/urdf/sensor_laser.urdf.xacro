@@ -44,9 +44,7 @@
                 <visualize>false</visualize>
                 <update_rate>5</update_rate>
                 <pose>0 0 0 0 0 0</pose>
-                <!-- 激光传感器配置 -->
                 <ray>
-                    <!-- 设置扫描角度范围 -->
                     <scan>
                         <horizontal>
                             <samples>1500</samples>

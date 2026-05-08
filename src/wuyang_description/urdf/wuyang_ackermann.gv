@@ -4,6 +4,7 @@ node [shape=box];
 "base_link" [label="base_link"];
 "camera_pitch_link" [label="camera_pitch_link"];
 "camera_body_link" [label="camera_body_link"];
+"camera_optical_link" [label="camera_optical_link"];
 "laser_link" [label="laser_link"];
 "left_front_knuckle" [label="left_front_knuckle"];
 "left_front_wheel" [label="left_front_wheel"];
@@ -18,6 +19,8 @@ node [shape=ellipse, color=blue, fontcolor=blue];
 "camera_base_joint" -> "camera_pitch_link"
 "camera_pitch_link" -> "camera_mount_joint" [label="xyz: -0.0085 0 0.011 \nrpy: 0 -0 0"]
 "camera_mount_joint" -> "camera_body_link"
+"camera_body_link" -> "camera_optical_joint" [label="xyz: 0 0 0 \nrpy: -1.5708 -0 -1.5708"]
+"camera_optical_joint" -> "camera_optical_link"
 "base_link" -> "laser_joint" [label="xyz: 0.059 0 0.109 \nrpy: 0 -0 0"]
 "laser_joint" -> "laser_link"
 "base_link" -> "left_front_steering_joint" [label="xyz: 0.072 0.079 -0.0425 \nrpy: 0 -0 0"]
