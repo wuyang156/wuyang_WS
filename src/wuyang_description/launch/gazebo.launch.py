@@ -10,13 +10,13 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     pkg_share = FindPackageShare('wuyang_description')
     gazebo_ros_share = FindPackageShare('gazebo_ros')
-    full_urdf_file = PathJoinSubstitution([pkg_share, 'urdf', 'full.urdf'])
+    ackermann_urdf_file = PathJoinSubstitution([pkg_share, 'urdf', 'wuyang_ackermann.urdf.xacro'])
 
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{
-            'robot_description': ParameterValue(Command(['cat ', full_urdf_file]), value_type=str),
+            'robot_description': ParameterValue(Command(['xacro ', ackermann_urdf_file]), value_type=str),
             'use_sim_time': True
         }]
     )
