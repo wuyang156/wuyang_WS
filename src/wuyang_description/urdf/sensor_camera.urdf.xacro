@@ -75,7 +75,7 @@
                 </camera>
                 <plugin name="gemini_camera_controller" filename="libgazebo_ros_camera.so">
                     <ros>
-                        <namespace></namespace>
+                        <namespace>/</namespace>
                         <remapping>~/image_raw:=image_raw</remapping>
                         <remapping>~/camera_info:=camera_info</remapping>
                         <remapping>~/depth/image_raw:=depth/image_raw</remapping>
