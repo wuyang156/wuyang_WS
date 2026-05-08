@@ -24,7 +24,10 @@ def generate_launch_description():
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([gazebo_ros_share, 'launch', 'gazebo.launch.py'])
-        )
+        ),
+        launch_arguments={
+            'world': PathJoinSubstitution([pkg_share, 'world', 'wuyang_world'])
+        }.items()
     )
  
     spawn_entity = Node(
