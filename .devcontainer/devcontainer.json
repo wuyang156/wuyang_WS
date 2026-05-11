@@ -1,0 +1,5 @@
+{
+  "name": "ROS 2 Dev",
+  "image": "ros:humble",
+  "runArgs": ["--network", "host", "--dns", "8.8.8.8"]
+}
