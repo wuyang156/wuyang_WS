@@ -1,9 +1,14 @@
 {
   "name": "ROS 2 Dev",
   "image": "ros:humble",
-  "runArgs": ["--network", "host", "--dns", "8.8.8.8"],
+  "runArgs": [
+    "--network", "host",
+    "--dns", "8.8.8.8",
+    "-e", "DISPLAY=${DISPLAY}",
+    "--ipc=host"
+  ],
   "mounts": [
     "source=/home/wuyanghhz/.ssh,target=/root/.ssh,type=bind"
-  ]
+  ],
+  "postCreateCommand": "sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && apt-get update && apt-get install -y openssh-client"
 }
-
