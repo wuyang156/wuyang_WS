@@ -26,7 +26,7 @@ def generate_launch_description():
             PathJoinSubstitution([gazebo_ros_share, 'launch', 'gazebo.launch.py'])
         ),
         launch_arguments={
-            'world': PathJoinSubstitution([pkg_share, 'world', 'wuyang_world'])
+            'world': PathJoinSubstitution([pkg_share, 'world', 'my_world'])
         }.items()
     )
  

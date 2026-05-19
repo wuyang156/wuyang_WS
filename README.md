@@ -30,7 +30,8 @@ sudo apt-get install -y \
   ros-humble-controller-manager \
   ros-humble-joint-state-broadcaster \
   ros-humble-gazebo-plugins\
-  ros-humble-gazebo-ros-pkgs
+  ros-humble-gazebo-ros-pkgs\
+  ros-humble-ros2-controllers
 ```
 
 ## 构建
