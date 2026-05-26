@@ -50,6 +50,8 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+pluginlib_export_plugin_description_file(polygon_base plugins.xml)
+
 ament_export_include_directories(
   include
 )
