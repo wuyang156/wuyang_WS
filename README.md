@@ -93,6 +93,4 @@ wuyang_ws/
 - **激光雷达**：360° 扫描，10m 量程，5Hz 更新率
 - **深度相机**：800×600 分辨率，0.15-10m 深度范围，30Hz 更新率
 
-## Docker 开发环境
 
-项目已配置 `.devcontainer/devcontainer.json`，基于 `ros:humble` 镜像，可直接在 VS Code 中使用 Dev Containers 打开。
