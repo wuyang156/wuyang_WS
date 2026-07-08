@@ -1,8 +1,8 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, RegisterEventHandler
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, PathJoinSubstitution
-from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler # type: ignore
+from launch.launch_description_sources import PythonLaunchDescriptionSource # pyright: ignore[reportMissingImports]
+from launch.substitutions import Command, PathJoinSubstitution # type: ignore
+from launch_ros.actions import Node # pyright: ignore[reportMissingImports]
 from launch_ros.substitutions import FindPackageShare
 from launch.event_handlers import OnProcessExit
 from launch_ros.parameter_descriptions import ParameterValue
@@ -83,7 +83,15 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
     )
 
-    # 7. Teleop keyboard (已修复：重映射控制话题到阿克曼控制器)
+    # 7. Twist → Ackermann 转换器
+    twist_to_ackermann_node = Node(
+        package='wuyang_description',
+        executable='twist_to_ackermann.py',
+        name='twist_to_ackermann',
+        output='screen',
+    )
+
+    # 8. Teleop keyboard（发布 /cmd_vel，由转换器转为 AckermannDrive）
     teleop_node = Node(
         package='teleop_twist_keyboard',
         executable='teleop_twist_keyboard',
@@ -91,9 +99,6 @@ def generate_launch_description():
         prefix='xterm -e',
         output='screen',
         parameters=[{'use_sim_time': True}],
-        remappings=[
-            ('/cmd_vel', '/ackermann_controller/reference')
-        ]
     )
 
     # 控制器延迟加载
@@ -119,5 +124,6 @@ def generate_launch_description():
         broadcaster_exit_event,
         slam_toolbox_node,
         rviz2_node,
+        twist_to_ackermann_node,
         teleop_node,
     ])
