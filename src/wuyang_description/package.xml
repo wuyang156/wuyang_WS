@@ -25,11 +25,6 @@
   <!-- SLAM 建图 -->
   <exec_depend>slam_toolbox</exec_depend>
 
-  <!-- Twist → Ackermann 转换 -->
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>ackermann_msgs</exec_depend>
-
   <!-- 键盘遥控 -->
   <exec_depend>teleop_twist_keyboard</exec_depend>
   <exec_depend>xterm</exec_depend>

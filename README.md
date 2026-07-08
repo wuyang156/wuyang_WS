@@ -93,4 +93,50 @@ wuyang_ws/
 - **激光雷达**：360° 扫描，10m 量程，5Hz 更新率
 - **深度相机**：800×600 分辨率，0.15-10m 深度范围，30Hz 更新率
 
+## 话题层级
+
+```
+键盘遥控                    控制器                          ROS 2 生态
+teleop_twist_keyboard ────► ackermann_steering_controller
+                                 │
+/cmd_vel                        │  参考输入
+  geometry_msgs/Twist  ─────────┤  /ackermann_controller/reference_unstamped
+                                │    geometry_msgs/Twist
+  linear.x ────────── 线速度 ────┤
+  angular.z ───────── 转向角 ────┤
+                                │
+                                │  状态输出
+                                │  /ackermann_controller/odometry
+                                │    nav_msgs/Odometry
+                                │
+                                ├──/ackermann_controller/controller_state
+                                ├──/ackermann_controller/tf_odometry
+                                └──/ackermann_controller/transition_event
+
+/joint_states ←── joint_state_broadcaster ←── Gazebo 关节状态
+  sensor_msgs/JointState
+```
+
+> **关键点：** 该版本控制器通过 `reference_unstamped`（类型 `geometry_msgs/Twist`）接收运动指令，而非 `reference`（类型 `ackermann_msgs/AckermannDrive`）。`teleop_twist_keyboard` 的重映射目标须为 `reference_unstamped`。
+
+### 键盘控制命令
+
+```bash
+# 手动发布：前进 0.5 m/s
+ros2 topic pub --once /ackermann_controller/reference_unstamped geometry_msgs/msg/Twist "{linear: {x: 0.5}, angular: {z: 0.0}}"
+
+# 持续发布（Ctrl+C 停止）
+ros2 topic pub --rate 10 /ackermann_controller/reference_unstamped geometry_msgs/msg/Twist "{linear: {x: 0.5}, angular: {z: 0.0}}"
+```
+
+| 按键 | 动作 |
+|------|------|
+| `i` | 前进 |
+| `,` | 后退 |
+| `j` | 左转 |
+| `l` | 右转 |
+| `u` | 左前 |
+| `o` | 右前 |
+| `k` / `Space` | 停止 |
+
 

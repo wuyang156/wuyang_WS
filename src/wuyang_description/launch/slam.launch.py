@@ -83,15 +83,7 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
     )
 
-    # 7. Twist → Ackermann 转换器
-    twist_to_ackermann_node = Node(
-        package='wuyang_description',
-        executable='twist_to_ackermann.py',
-        name='twist_to_ackermann',
-        output='screen',
-    )
-
-    # 8. Teleop keyboard（发布 /cmd_vel，由转换器转为 AckermannDrive）
+    # 7. Teleop keyboard（重映射到控制器的 Twist 输入话题）
     teleop_node = Node(
         package='teleop_twist_keyboard',
         executable='teleop_twist_keyboard',
@@ -99,6 +91,9 @@ def generate_launch_description():
         prefix='xterm -e',
         output='screen',
         parameters=[{'use_sim_time': True}],
+        remappings=[
+            ('/cmd_vel', '/ackermann_controller/reference_unstamped')
+        ],
     )
 
     # 控制器延迟加载
@@ -124,6 +119,5 @@ def generate_launch_description():
         broadcaster_exit_event,
         slam_toolbox_node,
         rviz2_node,
-        twist_to_ackermann_node,
         teleop_node,
     ])
