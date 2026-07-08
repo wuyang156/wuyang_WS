@@ -95,48 +95,62 @@ wuyang_ws/
 
 ## 话题层级
 
+### 键盘 → 控制器（控制指令输入）
+
+| 发布者 (Publisher) | 话题 (Topic) | 消息类型 | 订阅者 (Subscriber) | 作用 |
+|---|---|---|---|---|
+| `teleop_twist_keyboard` | `/cmd_vel` | `geometry_msgs/Twist` | —(launch 中重映射)— | 将键盘按键转为运动指令：`linear.x` 控制线速度，`angular.z` 控制转向角 |
+| —(重映射后)— | `/ackermann_controller/reference_unstamped` | `geometry_msgs/Twist` | `ackermann_controller` | 控制器接收目标线速度和角速度，驱动后轮滚动和前轮转向 |
+
+### 控制器 → 系统（状态反馈输出）
+
+| 发布者 (Publisher) | 话题 (Topic) | 消息类型 | 订阅者 (Subscriber) | 作用 |
+|---|---|---|---|---|
+| `ackermann_controller` | `/ackermann_controller/odometry` | `nav_msgs/Odometry` | SLAM、Rviz 等 | 里程计数据：包含机器人实时位姿 (pose) 和速度 (twist)，用于定位和建图 |
+| `ackermann_controller` | `/ackermann_controller/tf_odometry` | `tf2_msgs/TFMessage` | `robot_state_publisher`、`rviz2` | 发布 odom → base_link 的坐标变换，维持 TF 树 |
+| `ackermann_controller` | `/ackermann_controller/controller_state` | `control_msgs/msg/JointTrajectoryControllerState` | 调试工具 | 控制器内部状态，包括各关节的目标值与实际值 |
+| `ackermann_controller` | `/ackermann_controller/transition_event` | `lifecycle_msgs/msg/TransitionEvent` | 调试工具 | 生命周期状态切换日志 |
+
+### Gazebo → 控制器（关节状态输入）
+
+| 发布者 (Publisher) | 话题 (Topic) | 消息类型 | 订阅者 (Subscriber) | 作用 |
+|---|---|---|---|---|
+| `joint_state_broadcaster` | `/joint_states` | `sensor_msgs/JointState` | `robot_state_publisher`、`ackermann_controller` | 所有关节的实时位置和速度反馈，使 URDF 模型在 Rviz 中同步运动 |
+
+### 数据流简图
+
 ```
-键盘遥控                    控制器                          ROS 2 生态
-teleop_twist_keyboard ────► ackermann_steering_controller
-                                 │
-/cmd_vel                        │  参考输入
-  geometry_msgs/Twist  ─────────┤  /ackermann_controller/reference_unstamped
-                                │    geometry_msgs/Twist
-  linear.x ────────── 线速度 ────┤
-  angular.z ───────── 转向角 ────┤
-                                │
-                                │  状态输出
-                                │  /ackermann_controller/odometry
-                                │    nav_msgs/Odometry
-                                │
-                                ├──/ackermann_controller/controller_state
-                                ├──/ackermann_controller/tf_odometry
-                                └──/ackermann_controller/transition_event
-
-/joint_states ←── joint_state_broadcaster ←── Gazebo 关节状态
-  sensor_msgs/JointState
+teleop_twist_keyboard             joint_state_broadcaster (Gazebo)
+  │  /cmd_vel                        │  /joint_states
+  │  Twist (linear.x, angular.z)     │  JointState (position, velocity)
+  ▼                                  ▼
+ackermann_steering_controller ──────────────────────────────────────►
+  │  odometry (nav_msgs/Odometry)    → SLAM / Rviz
+  │  tf_odometry (TFMessage)         → TF 树
+  │  controller_state               → 调试
+  └──transition_event               → 调试
 ```
 
-> **关键点：** 该版本控制器通过 `reference_unstamped`（类型 `geometry_msgs/Twist`）接收运动指令，而非 `reference`（类型 `ackermann_msgs/AckermannDrive`）。`teleop_twist_keyboard` 的重映射目标须为 `reference_unstamped`。
+> **重映射说明：** `teleop_twist_keyboard` 默认发布到 `/cmd_vel`，launch 文件中通过 remappings 将 `/cmd_vel` 映射到 `/ackermann_controller/reference_unstamped`，使键盘指令直达控制器。该控制器本版本使用 `reference_unstamped`（类型 `Twist`）而非 `reference`（类型 `AckermannDrive`）。
 
-### 键盘控制命令
+### 键盘控制
 
 ```bash
-# 手动发布：前进 0.5 m/s
+# 单次测试：前进 0.5 m/s
 ros2 topic pub --once /ackermann_controller/reference_unstamped geometry_msgs/msg/Twist "{linear: {x: 0.5}, angular: {z: 0.0}}"
 
-# 持续发布（Ctrl+C 停止）
+# 持续控制（Ctrl+C 停止）
 ros2 topic pub --rate 10 /ackermann_controller/reference_unstamped geometry_msgs/msg/Twist "{linear: {x: 0.5}, angular: {z: 0.0}}"
 ```
 
-| 按键 | 动作 |
-|------|------|
-| `i` | 前进 |
-| `,` | 后退 |
-| `j` | 左转 |
-| `l` | 右转 |
-| `u` | 左前 |
-| `o` | 右前 |
-| `k` / `Space` | 停止 |
+| 按键 | 动作 | 输入 |
+|------|------|------|
+| `i` | 前进 | linear.x = +0.5 |
+| `,` | 后退 | linear.x = −0.5 |
+| `j` | 左转 | angular.z = +1.0 |
+| `l` | 右转 | angular.z = −1.0 |
+| `u` | 左前 | linear.x = +0.5, angular.z = +1.0 |
+| `o` | 右前 | linear.x = +0.5, angular.z = −1.0 |
+| `k` / `Space` | 停止 | 全零 |
 
 
