@@ -90,7 +90,11 @@ def generate_launch_description():
         name='teleop_twist_keyboard',
         prefix='xterm -e',
         output='screen',
-        parameters=[{'use_sim_time': True}],
+        parameters=[{
+            'use_sim_time': True,
+            'speed': 0.3,   # 线速度增量 (m/s)，默认 0.5
+            'turn': 0.6,    # 角速度增量 (rad/s)，默认 1.0
+        }],
         remappings=[
             ('/cmd_vel', '/ackermann_controller/reference_unstamped')
         ],
