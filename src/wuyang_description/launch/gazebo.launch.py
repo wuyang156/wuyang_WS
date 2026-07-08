@@ -55,11 +55,29 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 键盘控制
+    teleop_node = Node(
+        package='teleop_twist_keyboard',
+        executable='teleop_twist_keyboard',
+        name='teleop_twist_keyboard',
+        prefix='xterm -e',
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+            'speed': 0.1,   # 线速度增量 (m/s)
+            'turn': 0.2,    # 角速度增量 (rad/s)
+        }],
+        remappings=[
+            ('/cmd_vel', '/ackermann_controller/reference_unstamped')
+        ],
+    )
+
     return LaunchDescription([
         robot_state_publisher_node,
         gazebo,
         spawn_entity,
         rviz2_node,
+        teleop_node,
         
         RegisterEventHandler(
             event_handler=OnProcessExit(

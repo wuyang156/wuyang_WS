@@ -92,8 +92,8 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'use_sim_time': True,
-            'speed': 0.3,   # 线速度增量 (m/s)，默认 0.5
-            'turn': 0.6,    # 角速度增量 (rad/s)，默认 1.0
+            'speed': 0.1,   # 线速度增量 (m/s)，默认 0.5
+            'turn': 0.2,    # 角速度增量 (rad/s)，默认 1.0
         }],
         remappings=[
             ('/cmd_vel', '/ackermann_controller/reference_unstamped')
