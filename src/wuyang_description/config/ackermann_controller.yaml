@@ -31,6 +31,8 @@ ackermann_controller:
     front_steering: true
     open_loop: false
     position_feedback: true
+    odom_frame_id: odom
+    base_frame_id: base_footprint
     
     linear:
       x:
