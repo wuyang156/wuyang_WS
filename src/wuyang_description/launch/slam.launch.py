@@ -60,7 +60,11 @@ def generate_launch_description():
     load_ackermann_controller = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['ackermann_controller', '--ros-args', '-p', 'use_sim_time:=true'],
+        arguments=[
+            'ackermann_controller',
+            '--ros-args', '-r', '~/tf_odometry:=/tf',
+            '-p', 'use_sim_time:=true'
+        ],
     )
 
     # 5. SLAM Toolbox

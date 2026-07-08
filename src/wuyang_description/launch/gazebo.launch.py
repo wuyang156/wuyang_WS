@@ -46,7 +46,10 @@ def generate_launch_description():
     load_ackermann_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["ackermann_controller"],
+        arguments=[
+            "ackermann_controller",
+            "--ros-args", "-r", "~/tf_odometry:=/tf"
+        ],
     )
 
     rviz2_node = Node(
