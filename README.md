@@ -50,6 +50,19 @@ ros2 launch wuyang_description display.launch.py
 
 # Gazebo 仿真模式（完整物理仿真）
 ros2 launch wuyang_description gazebo.launch.py
+
+# SLAM 建图模式
+ros2 launch wuyang_description slam.launch.py
+```
+
+### 保存地图
+
+```bash
+# 建图完成后保存（路径按需修改）
+ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data: '/home/hhz/my_map'}}"
+```
+
+地图文件 `map.pgm` 和 `map.yaml` 会生成在指定路径下。
 ```
 
 ## 项目结构
