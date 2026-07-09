@@ -25,6 +25,9 @@
   <!-- SLAM 建图 -->
   <exec_depend>slam_toolbox</exec_depend>
 
+  <!-- 视觉 SLAM -->
+  <exec_depend>rtabmap_ros</exec_depend>
+
   <!-- 话题工具 -->
   <exec_depend>topic_tools</exec_depend>
 

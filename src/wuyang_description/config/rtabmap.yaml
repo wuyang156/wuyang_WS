@@ -1,0 +1,45 @@
+rtabmap:
+  ros__parameters:
+    use_sim_time: true
+
+    # 输入源
+    subscribe_rgb: true
+    subscribe_depth: true
+    subscribe_scan: false
+
+    # TF 帧
+    frame_id: camera_optical_link
+    odom_frame_id: odom
+    map_frame_id: map
+
+    # 里程计话题（轮式里程计提供初始猜测）
+    odom_topic: /ackermann_controller/odometry
+
+    # 视觉里程计
+    Vis/CorType: 0              # 0=SURF, 1=ORB
+    Vis/MinInliers: 15
+    Vis/EstimationType: 1       # 1=3D->3D, 基于深度图
+    Vis/MaxFeatures: 1000
+    Vis/FeatureType: 6          # 6=SURF
+
+    # 2D 栅格地图生成
+    Grid/FromDepth: true
+    Grid/3D: false
+    Grid/CellSize: 0.05
+    Grid/RangeMax: 5.0
+    Grid/FlatObstacleDetected: false
+    Grid/NoiseFilteringRadius: 0.02
+    Grid/NoiseFilteringMinNeighbours: 3
+
+    # 回环检测
+    Rtabmap/DetectionRate: 1.0
+    Rtabmap/TimeThr: 700
+    Rtabmap/MemoryThr: 300
+    Rtabmap/LoopThr: 0.11
+    RGBD/LocalLoopDetectionSpace: 20.0
+    RGBD/LocalRadius: 5.0
+
+    # 内存与数据库
+    database_path: ""
+    Mem/UseOdomFeatures: true
+    Kp/MaxFeatures: 400
