@@ -25,6 +25,9 @@
   <!-- SLAM 建图 -->
   <exec_depend>slam_toolbox</exec_depend>
 
+  <!-- 话题工具 -->
+  <exec_depend>topic_tools</exec_depend>
+
   <!-- 键盘遥控 -->
   <exec_depend>teleop_twist_keyboard</exec_depend>
   <exec_depend>xterm</exec_depend>

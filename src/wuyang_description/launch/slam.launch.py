@@ -60,11 +60,15 @@ def generate_launch_description():
     load_ackermann_controller = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=[
-            'ackermann_controller',
-            '--ros-args', '-r', '~/tf_odometry:=/tf',
-            '-p', 'use_sim_time:=true'
-        ],
+        arguments=['ackermann_controller', '--ros-args', '-p', 'use_sim_time:=true'],
+    )
+
+    # 4.1 TF 中继（odom → base_footprint 注入 /tf）
+    tf_relay_node = Node(
+        package='topic_tools',
+        executable='relay',
+        name='tf_relay',
+        arguments=['/ackermann_controller/tf_odometry', '/tf'],
     )
 
     # 5. SLAM Toolbox
@@ -125,6 +129,7 @@ def generate_launch_description():
         spawn_entity,
         spawn_exit_event,
         broadcaster_exit_event,
+        tf_relay_node,
         slam_toolbox_node,
         rviz2_node,
         teleop_node,

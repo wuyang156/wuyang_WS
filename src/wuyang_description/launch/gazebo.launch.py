@@ -46,10 +46,15 @@ def generate_launch_description():
     load_ackermann_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=[
-            "ackermann_controller",
-            "--ros-args", "-r", "~/tf_odometry:=/tf"
-        ],
+        arguments=["ackermann_controller"],
+    )
+
+    # TF 中继（odom → base_footprint 注入 /tf）
+    tf_relay_node = Node(
+        package='topic_tools',
+        executable='relay',
+        name='tf_relay',
+        arguments=['/ackermann_controller/tf_odometry', '/tf'],
     )
 
     rviz2_node = Node(
@@ -80,6 +85,7 @@ def generate_launch_description():
         gazebo,
         spawn_entity,
         rviz2_node,
+        tf_relay_node,
         teleop_node,
         
         RegisterEventHandler(
