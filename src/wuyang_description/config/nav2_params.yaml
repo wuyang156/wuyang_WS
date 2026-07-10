@@ -4,7 +4,7 @@ amcl:
     base_frame_id: base_footprint
     global_frame_id: map
     odom_frame_id: odom
-    robot_model_type: differential
+    robot_model_type: nav2_amcl::DifferentialMotionModel
     laser_model_type: likelihood_field
     laser_max_range: 10.0
     laser_min_range: 0.12

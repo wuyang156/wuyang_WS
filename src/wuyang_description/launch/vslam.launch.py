@@ -45,7 +45,6 @@ def generate_launch_description():
             '-topic', '/robot_description',
             '-entity', 'wuyang_car',
             '-z', '0.05',
-            '-unspawn', 'true'
         ],
         output='screen',
     )
