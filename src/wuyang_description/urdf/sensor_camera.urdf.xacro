@@ -31,7 +31,7 @@
         </link>
 
         <joint name="camera_base_joint" type="revolute">
-            <origin xyz="${xyz}" rpy="0.0 0.4363 0.0"/>
+            <origin xyz="${xyz}" rpy="0.0 0.0 0.0"/>
             <parent link="${parent}"/>
             <child link="camera_pitch_link"/>
             <axis xyz="0.0 1.0 0.0"/>
