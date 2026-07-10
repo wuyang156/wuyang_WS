@@ -1,10 +1,10 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, RegisterEventHandler
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnProcessExit, OnProcessStart
 from launch_ros.parameter_descriptions import ParameterValue
 
 
@@ -164,8 +164,8 @@ def generate_launch_description():
         ],
     )
 
-    # 8. Lifecycle Manager
-    lifecycle_manager = Node(
+    # 8. Lifecycle Manager（等待 map_server 启动后再激活）
+    lifecycle_manager_node = Node(
         package='nav2_lifecycle_manager',
         executable='lifecycle_manager',
         name='lifecycle_manager',
@@ -179,6 +179,13 @@ def generate_launch_description():
                 'velocity_smoother',
             ],
         }],
+    )
+
+    lifecycle_after_map = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=map_server_node,
+            on_start=[lifecycle_manager_node],
+        )
     )
 
     # 9. RViz2
@@ -219,6 +226,6 @@ def generate_launch_description():
         behavior_server,
         bt_navigator,
         velocity_smoother,
-        lifecycle_manager,
+        lifecycle_after_map,
         rviz2_node,
     ])
