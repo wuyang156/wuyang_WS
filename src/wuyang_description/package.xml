@@ -25,7 +25,18 @@
   <!-- SLAM 建图 -->
   <exec_depend>slam_toolbox</exec_depend>
 
-  <!-- 视觉 SLAM -->
+  <!-- Nav2 导航 -->
+  <exec_depend>nav2_amcl</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_planner</exec_depend>
+  <exec_depend>nav2_controller</exec_depend>
+  <exec_depend>nav2_behaviors</exec_depend>
+  <exec_depend>nav2_bt_navigator</exec_depend>
+  <exec_depend>nav2_waypoint_follower</exec_depend>
+  <exec_depend>nav2_velocity_smoother</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+
+  <!-- 视觉 SLAM（备用） -->
   <exec_depend>rtabmap_ros</exec_depend>
 
   <!-- 话题工具 -->

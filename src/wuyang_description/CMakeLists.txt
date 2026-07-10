@@ -8,8 +8,13 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY urdf launch config world
+  DIRECTORY urdf launch config world maps
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  scripts/cmd_vel_to_ackermann.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
