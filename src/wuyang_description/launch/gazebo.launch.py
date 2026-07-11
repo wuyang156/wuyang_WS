@@ -87,6 +87,15 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
     )
 
+    # 延迟监控（Qt GUI 弹窗）
+    cmd_vel_monitor_node = Node(
+        package='wuyang_description',
+        executable='cmd_vel_monitor',
+        name='cmd_vel_monitor',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
+    )
+
     return LaunchDescription([
         robot_state_publisher_node,
         gazebo,
@@ -95,6 +104,7 @@ def generate_launch_description():
         tf_relay_node,
         teleop_node,
         cmd_vel_bridge_node,
+        cmd_vel_monitor_node,
         
         RegisterEventHandler(
             event_handler=OnProcessExit(

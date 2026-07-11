@@ -9,9 +9,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <!-- cmd_vel_bridge C++ 节点依赖 -->
+  <!-- cmd_vel_bridge / cmd_vel_monitor C++ 节点依赖 -->
   <depend>rclcpp</depend>
   <depend>geometry_msgs</depend>
+
+  <!-- cmd_vel_monitor Qt5 GUI 依赖 -->
+  <depend>qtbase5-dev</depend>
 
   <!-- 机器人描述与状态发布 -->
   <exec_depend>xacro</exec_depend>

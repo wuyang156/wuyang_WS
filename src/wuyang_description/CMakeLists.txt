@@ -8,11 +8,19 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+set(CMAKE_AUTOMOC ON)   # 自动处理 Q_OBJECT 的 moc 生成
 
 # cmd_vel → ackermann 桥接节点（C++）
 add_executable(cmd_vel_bridge src/cmd_vel_bridge.cpp)
 ament_target_dependencies(cmd_vel_bridge rclcpp geometry_msgs)
 install(TARGETS cmd_vel_bridge DESTINATION lib/${PROJECT_NAME})
+
+# cmd_vel 延迟监控（Qt5 GUI）
+add_executable(cmd_vel_monitor src/cmd_vel_monitor.cpp)
+target_link_libraries(cmd_vel_monitor Qt5::Widgets)
+ament_target_dependencies(cmd_vel_monitor rclcpp geometry_msgs)
+install(TARGETS cmd_vel_monitor DESTINATION lib/${PROJECT_NAME})
 
 install(
   DIRECTORY urdf launch config world maps rviz2
