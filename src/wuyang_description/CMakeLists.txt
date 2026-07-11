@@ -7,7 +7,11 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 set(CMAKE_AUTOMOC ON)   # 自动处理 Q_OBJECT 的 moc 生成
 
@@ -21,6 +25,17 @@ add_executable(cmd_vel_monitor src/cmd_vel_monitor.cpp)
 target_link_libraries(cmd_vel_monitor Qt5::Widgets)
 ament_target_dependencies(cmd_vel_monitor rclcpp geometry_msgs)
 install(TARGETS cmd_vel_monitor DESTINATION lib/${PROJECT_NAME})
+
+# 顺序导航节点
+add_executable(sequential_navigator src/sequential_navigator.cpp)
+ament_target_dependencies(sequential_navigator
+  rclcpp
+  rclcpp_action
+  geometry_msgs
+  nav2_msgs
+  tf2
+  tf2_geometry_msgs)
+install(TARGETS sequential_navigator DESTINATION lib/${PROJECT_NAME})
 
 install(
   DIRECTORY urdf launch config world maps rviz2

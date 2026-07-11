@@ -1,0 +1,32 @@
+waypoints:
+  # 导航点列表，按顺序执行
+  # 每个点包含：position (x, y, z) 和 orientation (以四元数表示)
+  # 注意：z默认为0.0，orientation使用yaw角度（弧度）自动转换为四元数
+
+  - position:
+      x: 1.0
+      y: 0.0
+      z: 0.0
+    orientation:
+      yaw: 0.0  # 朝向x正向
+
+  - position:
+      x: 1.5
+      y: -0.5
+      z: 0.0
+    orientation:
+      yaw: -1.5708  # 朝向y负向（-90度）
+
+  - position:
+      x: 1.5
+      y: 0.5
+      z: 0.0
+    orientation:
+      yaw: 1.5708  # 朝向y正向（90度）
+
+  - position:
+      x: -1.0
+      y: 0.0
+      z: 0.0
+    orientation:
+      yaw: 3.14159  # 朝向x负向（180度）
