@@ -11,7 +11,7 @@ waypoints:
       yaw: 0.0  # 朝向x正向
 
   - position:
-      x: 1.4
+      x: 1.5
       y: -0.5
       z: 0.0
     orientation:
