@@ -22,7 +22,7 @@ waypoints:
       y: 0.5
       z: 0.0
     orientation:
-      yaw: 1.5708  # 朝向y正向（90度）
+      yaw: -1.5708  # 朝向y负向（-90度）
 
   - position:
       x: -1.0
