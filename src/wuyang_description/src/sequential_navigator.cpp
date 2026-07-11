@@ -126,9 +126,15 @@ private:
         send_goal_options.feedback_callback =
             [this](GoalHandleNavigate::SharedPtr,
                    const std::shared_ptr<const NavigateToPose::Feedback> feedback) {
-                // 可以在这里处理反馈信息
-                // RCLCPP_INFO(this->get_logger(), "距离目标: %.2f 米",
-                //     feedback->distance_remaining);
+                // 打印导航进度信息
+                RCLCPP_INFO_THROTTLE(
+                    this->get_logger(),
+                    *this->get_clock(),
+                    2000,  // 每2秒输出一次
+                    "导航中... 剩余距离: %.2f 米, 预计剩余时间: %.1f 秒",
+                    feedback->distance_remaining,
+                    feedback->estimated_time_remaining.sec +
+                        feedback->estimated_time_remaining.nanosec / 1e9);
             };
 
         send_goal_options.result_callback =
