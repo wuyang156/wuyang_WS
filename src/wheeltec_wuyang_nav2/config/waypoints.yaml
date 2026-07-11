@@ -1,0 +1,36 @@
+waypoints:
+  # 导航点列表，按顺序执行
+  # position: map 坐标系下的 x/y/z（z 固定为 0.0）
+  # orientation.yaw: 到达该点时的朝向角（弧度）
+  #   0.0      = 朝 x 正向（东）
+  #   1.5708   = 朝 y 正向（北，π/2）
+  #  -1.5708   = 朝 y 负向（南，-π/2）
+  #   3.14159  = 朝 x 负向（西，π）
+
+  - position:
+      x: 1.0
+      y: 0.0
+      z: 0.0
+    orientation:
+      yaw: 0.0       # 朝 x 正向
+
+  - position:
+      x: 1.5
+      y: -0.5
+      z: 0.0
+    orientation:
+      yaw: -1.5708   # 朝 y 负向
+
+  - position:
+      x: 1.5
+      y: 0.5
+      z: 0.0
+    orientation:
+      yaw: -1.5708   # 朝 y 负向
+
+  - position:
+      x: -1.0
+      y: 0.0
+      z: 0.0
+    orientation:
+      yaw: 3.14159   # 朝 x 负向
