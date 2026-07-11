@@ -1,5 +1,3 @@
-#include <atomic>
-#include <chrono>
 #include <mutex>
 #include <thread>
 
@@ -7,6 +5,7 @@
 #include <QFont>
 #include <QFrame>
 #include <QLabel>
+#include <QTime>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -18,8 +17,7 @@
 struct SharedData {
     std::mutex mtx;
     bool ever_received{false};
-    std::chrono::steady_clock::time_point last_recv;
-    double last_interval_ms{-1.0};  // 相邻两帧间隔
+    double latest_latency_ms{-1.0};  // 最新一条消息：发出 → 接收 的时延
 };
 
 // ── ROS2 订阅节点 ────────────────────────────────────────────────
@@ -29,17 +27,21 @@ public:
     explicit MonitorNode(std::shared_ptr<SharedData> data)
     : Node("cmd_vel_monitor"), data_(data)
     {
+        // 带 MessageInfo 的回调：读取 DDS 层时间戳
+        //   source_timestamp   —— 发布端 publish() 时自动打戳
+        //   received_timestamp —— 接收端收到时打戳
+        // 两者之差即为“最近一条消息从发出到被接收”的时延
         sub_ = create_subscription<geometry_msgs::msg::Twist>(
             "/cmd_vel", 10,
-            [this](const geometry_msgs::msg::Twist::SharedPtr /*msg*/) {
-                auto now = std::chrono::steady_clock::now();
+            [this](geometry_msgs::msg::Twist::UniquePtr /*msg*/,
+                   const rclcpp::MessageInfo & info) {
+                const auto & rmw = info.get_rmw_message_info();
+                double latency_ms = static_cast<double>(
+                    rmw.received_timestamp - rmw.source_timestamp) / 1e6;
+                if (latency_ms < 0.0) latency_ms = 0.0;  // 时钟偏差保护
+
                 std::lock_guard<std::mutex> lk(data_->mtx);
-                if (data_->ever_received) {
-                    data_->last_interval_ms =
-                        std::chrono::duration<double, std::milli>(
-                            now - data_->last_recv).count();
-                }
-                data_->last_recv = now;
+                data_->latest_latency_ms = latency_ms;
                 data_->ever_received = true;
             });
     }
@@ -59,89 +61,79 @@ public:
                            QWidget *parent = nullptr)
     : QWidget(parent), data_(data)
     {
-        setWindowTitle("/cmd_vel 延迟监控");
-        setFixedSize(420, 220);
+        setWindowTitle("/cmd_vel 网络延迟监控");
+        setFixedSize(460, 240);
 
         auto *root = new QVBoxLayout(this);
-        root->setContentsMargins(20, 16, 20, 16);
-        root->setSpacing(8);
+        root->setContentsMargins(24, 18, 24, 18);
+        root->setSpacing(10);
 
-        // ── 消息距今 ──
-        age_label_ = make_label(20, true);
-        age_label_->setText("等待 /cmd_vel 消息…");
+        latency_label_ = make_label(22, true);
+        latency_label_->setText("等待 /cmd_vel 消息…");
 
-        // ── 消息间隔 ──
-        interval_label_ = make_label(13, false);
-
-        // ── 分隔线 ──
         auto *line = new QFrame(this);
         line->setFrameShape(QFrame::HLine);
         line->setFrameShadow(QFrame::Sunken);
 
-        // ── 延迟评级 ──
         rating_label_ = make_label(15, true);
+        update_label_ = make_label(10, false);
+        update_label_->setStyleSheet("color: #888;");
 
-        // ── 说明 ──
         auto *hint = make_label(10, false);
         hint->setText(
-            "* 消息距今 = 上帧到达至今的时间（消息新鲜度）\n"
-            "  若需真实网络RTT，请改用 TwistStamped 并附上发送时间戳");
+            "* 延迟 = DDS received_timestamp − source_timestamp\n"
+            "  跨机器测量需两端 NTP 时钟同步，否则值含时钟偏差\n"
+            "* 每 2 秒采样一次最新消息的时延");
         hint->setStyleSheet("color: #888;");
         hint->setWordWrap(true);
 
-        root->addWidget(age_label_);
-        root->addWidget(interval_label_);
+        root->addWidget(latency_label_);
         root->addWidget(line);
         root->addWidget(rating_label_);
+        root->addWidget(update_label_);
         root->addWidget(hint);
 
+        // 每 2 秒采样并刷新一次
         auto *timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, &MonitorWidget::refresh);
-        timer->start(100);   // 10 Hz 刷新
+        timer->start(2000);
     }
 
 private slots:
     void refresh()
     {
-        double age_ms, interval_ms;
+        double latency_ms;
         bool ok;
         {
             std::lock_guard<std::mutex> lk(data_->mtx);
             ok = data_->ever_received;
-            if (!ok) return;
-            age_ms = std::chrono::duration<double, std::milli>(
-                std::chrono::steady_clock::now() - data_->last_recv).count();
-            interval_ms = data_->last_interval_ms;
+            latency_ms = data_->latest_latency_ms;
         }
+        if (!ok) return;
 
-        age_label_->setText(
-            QString("消息距今：<b>%1 ms</b>").arg(age_ms, 0, 'f', 1));
+        latency_label_->setText(
+            QString("网络延迟：<b>%1 ms</b>").arg(latency_ms, 0, 'f', 2));
 
-        if (interval_ms > 0.0) {
-            interval_label_->setText(
-                QString("消息间隔：%1 ms　　频率：%2 Hz")
-                    .arg(interval_ms, 0, 'f', 1)
-                    .arg(1000.0 / interval_ms, 0, 'f', 1));
-        }
-
-        // ── 延迟评级（基于消息距今） ──────────────────────────
-        struct Grade { double threshold; const char *text; const char *color; };
+        // ── 延迟评级 ──────────────────────────────────────────
+        struct Grade { double hi; const char *text; const char *color; };
         static constexpr Grade grades[] = {
-            {  50.0, "● 优秀   — 实时同步  (< 50 ms)",   "#00c853" },
-            { 100.0, "● 良好   — 轻微延迟  (50–100 ms)",  "#76d275" },
-            { 200.0, "● 可接受 — 明显延迟  (100–200 ms)", "#ffd600" },
-            { 500.0, "● 较差   — 严重延迟  (200–500 ms)", "#ff6d00" },
-            {  1e9,  "● 断连   — 消息中断  (> 500 ms)",   "#d50000" },
+            {  20.0, "● 优秀   — 实时控制    (< 20 ms)",    "#00c853" },
+            {  50.0, "● 良好   — 轻微延迟    (20–50 ms)",   "#76d275" },
+            { 100.0, "● 可接受 — 明显延迟    (50–100 ms)",  "#ffd600" },
+            { 300.0, "● 较差   — 控制受影响  (100–300 ms)", "#ff6d00" },
+            {  1e9,  "● 严重   — 基本不可用  (> 300 ms)",   "#d50000" },
         };
-
         for (auto &g : grades) {
-            if (age_ms < g.threshold) {
+            if (latency_ms < g.hi) {
                 rating_label_->setText(g.text);
                 rating_label_->setStyleSheet(
                     QString("color: %1; font-weight: bold;").arg(g.color));
                 break;
             }
         }
+
+        update_label_->setText(
+            QString("最近采样：%1").arg(QTime::currentTime().toString("hh:mm:ss")));
     }
 
 private:
@@ -157,9 +149,9 @@ private:
     }
 
     std::shared_ptr<SharedData> data_;
-    QLabel *age_label_;
-    QLabel *interval_label_;
+    QLabel *latency_label_;
     QLabel *rating_label_;
+    QLabel *update_label_;
 };
 
 // ── main ─────────────────────────────────────────────────────────
