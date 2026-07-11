@@ -111,15 +111,16 @@ def generate_launch_description():
 
     # === 导航 ===
 
-    # 静态 TF: map -> odom (初始位置在地图原点)
+    # 静态 TF: map -> odom (初始位置在地图坐标系原点)
     # 由于取消 AMCL，需要手动发布 map 到 odom 的变换
+    # 小车物理放置在地图原点后，odom 从 (0,0,0) 开始累积
     static_tf_map_to_odom = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_tf_map_to_odom',
         arguments=[
-            '--x', '-1.42',      # 地图 origin x
-            '--y', '-1.67',      # 地图 origin y
+            '--x', '0.0',
+            '--y', '0.0',
             '--z', '0.0',
             '--yaw', '0.0',
             '--pitch', '0.0',
