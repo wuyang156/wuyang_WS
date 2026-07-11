@@ -90,8 +90,6 @@ Visualization Manager:
           Value: true
         left_rear_wheel:
           Value: true
-        odom:
-          Value: true
         right_front_knuckle:
           Value: true
         right_front_wheel:
@@ -168,10 +166,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.389796495437622
+      Pitch: 0.694797158241272
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.3454012870788574
+      Yaw: 2.9454004764556885
     Saved: ~
 Window Geometry:
   Displays:
