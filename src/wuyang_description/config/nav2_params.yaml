@@ -220,10 +220,21 @@ global_costmap:
       robot_radius: 0.12
       resolution: 0.05
       track_unknown_space: true
-      # 全局代价地图只保留静态层：
-      # - 不含 obstacle_layer，避免动态障碍物永久残留导致路径规划锁死
-      # - 动态避障由局部代价地图的 voxel_layer 实时处理
-      plugins: ["static_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
