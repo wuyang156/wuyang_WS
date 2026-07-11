@@ -171,7 +171,8 @@ def generate_launch_description():
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
-        parameters=['-d', PathJoinSubstitution([pkg_share, 'rviz2', 'nav2_only_odom.rviz'])],
+        arguments=['-d', PathJoinSubstitution([pkg_share, 'rviz2', 'nav2_only_odom.rviz'])],
+        parameters=[{'use_sim_time': True}],
         output='screen',
     )
 
