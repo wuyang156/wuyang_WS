@@ -81,7 +81,7 @@ def generate_launch_description():
     # 桥接节点：/cmd_vel → /ackermann_controller/reference_unstamped
     cmd_vel_bridge_node = Node(
         package='wuyang_description',
-        executable='cmd_vel_to_ackermann.py',
+        executable='cmd_vel_bridge',
         name='cmd_vel_bridge',
         output='screen',
         parameters=[{'use_sim_time': True}],
