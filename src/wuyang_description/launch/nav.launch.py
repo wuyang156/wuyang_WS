@@ -111,15 +111,59 @@ def generate_launch_description():
 
     # === 导航 ===
 
-    launch_bringup = IncludeLaunchDescription(
+    # 静态 TF: map -> odom (初始位置在地图原点)
+    # 由于取消 AMCL，需要手动发布 map 到 odom 的变换
+    static_tf_map_to_odom = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_tf_map_to_odom',
+        arguments=[
+            '--x', '-1.42',      # 地图 origin x
+            '--y', '-1.67',      # 地图 origin y
+            '--z', '0.0',
+            '--yaw', '0.0',
+            '--pitch', '0.0',
+            '--roll', '0.0',
+            '--frame-id', 'map',
+            '--child-frame-id', 'odom'
+        ],
+        parameters=[{'use_sim_time': True}],
+    )
+
+    # 使用 navigation_launch 而非 bringup_launch (不包含 AMCL)
+    launch_navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [nav2_bringup_dir, '/launch', '/bringup_launch.py']
+            [nav2_bringup_dir, '/launch', '/navigation_launch.py']
         ),
         launch_arguments={
-            'map': map_yaml_path,
             'use_sim_time': use_sim_time,
             'params_file': nav2_param_path,
         }.items(),
+    )
+
+    # Map Server 单独启动
+    map_server_node = Node(
+        package='nav2_map_server',
+        executable='map_server',
+        name='map_server',
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+            'yaml_filename': map_yaml_path,
+        }],
+    )
+
+    # Lifecycle Manager 用于激活 map_server
+    lifecycle_manager_nav = Node(
+        package='nav2_lifecycle_manager',
+        executable='lifecycle_manager',
+        name='lifecycle_manager_navigation',
+        output='screen',
+        parameters=[{
+            'use_sim_time': True,
+            'autostart': True,
+            'node_names': ['map_server']
+        }],
     )
 
     # === RViz ===
@@ -142,6 +186,9 @@ def generate_launch_description():
         broadcaster_exit_event,
         tf_relay_node,
         cmd_vel_converter,
-        launch_bringup,
+        static_tf_map_to_odom,
+        map_server_node,
+        lifecycle_manager_nav,
+        launch_navigation,
         rviz2_node,
     ])
