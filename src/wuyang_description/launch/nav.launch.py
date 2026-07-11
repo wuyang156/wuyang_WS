@@ -49,7 +49,7 @@ def generate_launch_description():
             [gazebo_ros_share, '/launch', '/gazebo.launch.py']
         ),
         launch_arguments={
-            'world': os.path.join(pkg_share, 'world', 'wheeltec_world')
+            'world': os.path.join(pkg_share, 'world', 'my_world')
         }.items(),
     )
 
@@ -171,7 +171,7 @@ def generate_launch_description():
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
-        parameters=[{'use_sim_time': True}],
+        parameters=['-d', PathJoinSubstitution([pkg_share, 'rviz2', 'nav2_only_odom.rviz'])],
         output='screen',
     )
 
