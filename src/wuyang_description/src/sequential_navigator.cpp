@@ -26,8 +26,7 @@ class SequentialNavigator : public rclcpp::Node
 public:
     SequentialNavigator() : Node("sequential_navigator")
     {
-        // 声明参数
-        this->declare_parameter<bool>("use_sim_time", true);
+        // 声明参数（use_sim_time 会由 launch 文件自动设置，不需要手动声明）
         this->declare_parameter<std::vector<double>>("waypoints", std::vector<double>());
 
         // 创建导航动作客户端
