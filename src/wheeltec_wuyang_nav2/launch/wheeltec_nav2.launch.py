@@ -23,9 +23,9 @@ def generate_launch_description():
         'params_file',
         default=os.path.join(wheeltec_nav_dir, 'param', 'wheeltec_params', 'param_odom_akm.yaml'))
 
-    initial_pose_x   = LaunchConfiguration('initial_pose_x',   default='0.0')
-    initial_pose_y   = LaunchConfiguration('initial_pose_y',   default='0.0')
-    initial_pose_yaw = LaunchConfiguration('initial_pose_yaw', default='0.0')
+    initial_pose_x   = LaunchConfiguration('initial_pose_x',   default='0.8')
+    initial_pose_y   = LaunchConfiguration('initial_pose_y',   default='0.5')
+    initial_pose_yaw = LaunchConfiguration('initial_pose_yaw', default='-1.5708')
 
     return LaunchDescription([
         DeclareLaunchArgument(
