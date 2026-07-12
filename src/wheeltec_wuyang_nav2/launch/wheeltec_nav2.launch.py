@@ -4,6 +4,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -71,5 +72,20 @@ def generate_launch_description():
                 'initial_pose_y':   initial_pose_y,
                 'initial_pose_yaw': initial_pose_yaw,
             }.items(),
+        ),
+
+        # 视觉-速度拦截节点：/origin_cmd + /visual_result → /cmd_vel
+        Node(
+            package='wheeltec_wuyang_nav2',
+            executable='cmd_vel_interceptor',
+            name='cmd_vel_interceptor',
+            output='screen',
+            parameters=[{
+                'publish_rate':   30.0,   # Hz，与 controller_server 频率一致
+                'max_decel':       0.5,   # m/s²，线速度减速上限
+                'max_ang_decel':   1.0,   # rad/s²，角速度减速上限
+                'slow_ratio':      0.4,   # SLOW 模式速度倍率
+                'visual_timeout':  1.0,   # 感知话题超时(s)后退回 NORMAL
+            }],
         ),
     ])

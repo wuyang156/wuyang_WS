@@ -17,6 +17,7 @@ find_package(nav2_bringup REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -32,6 +33,17 @@ ament_target_dependencies(sequential_navigator
   tf2_geometry_msgs
 )
 install(TARGETS sequential_navigator
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# 视觉-速度拦截节点：/origin_cmd + /visual_result → /cmd_vel
+add_executable(cmd_vel_interceptor src/cmd_vel_interceptor.cpp)
+ament_target_dependencies(cmd_vel_interceptor
+  rclcpp
+  geometry_msgs
+  std_msgs
+)
+install(TARGETS cmd_vel_interceptor
   DESTINATION lib/${PROJECT_NAME}
 )
 
