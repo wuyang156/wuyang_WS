@@ -89,7 +89,7 @@ def generate_launch_description():
     # cmd_vel 转换器
     cmd_vel_converter = Node(
         package='wuyang_description',
-        executable='cmd_vel_to_ackermann.py',
+        executable='cmd_vel_bridge',
         name='cmd_vel_to_ackermann',
         output='screen',
     )
