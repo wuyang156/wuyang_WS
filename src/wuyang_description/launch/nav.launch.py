@@ -60,10 +60,6 @@ def generate_launch_description():
         arguments=[
             '-topic', '/robot_description',
             '-entity', 'wuyang_car',
-            '-x', '0.83',
-            '-y', '0.5',
-            '-z', '0.05',
-            '-Y', '-1.5708',  # 朝向 Y 轴负方向
         ],
         output='screen',
     )
