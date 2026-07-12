@@ -60,7 +60,10 @@ def generate_launch_description():
         arguments=[
             '-topic', '/robot_description',
             '-entity', 'wuyang_car',
+            '-x', '0.83',
+            '-y', '0.5',
             '-z', '0.05',
+            '-Y', '-1.5708',  # 朝向 Y 轴负方向
         ],
         output='screen',
     )
@@ -113,16 +116,16 @@ def generate_launch_description():
 
     # 静态 TF: map -> odom (初始位置在地图坐标系原点)
     # 由于取消 AMCL，需要手动发布 map 到 odom 的变换
-    # 小车物理放置在地图原点后，odom 从 (0,0,0) 开始累积
+    # 小车物理放置在地图 (0.83, 0.5) 处，朝向 Y 轴负方向
     static_tf_map_to_odom = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_tf_map_to_odom',
         arguments=[
-            '--x', '0.0',
-            '--y', '0.0',
+            '--x', '0.83',
+            '--y', '0.5',
             '--z', '0.0',
-            '--yaw', '0.0',
+            '--yaw', '-1.5708',  # 朝向 Y 轴负方向
             '--pitch', '0.0',
             '--roll', '0.0',
             '--frame-id', 'map',
