@@ -57,27 +57,6 @@ def generate_launch_description():
         arguments=['/ackermann_controller/tf_odometry', '/tf'],
     )
 
-    rviz2_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        arguments=['-d', PathJoinSubstitution([pkg_share, 'rviz2', 'real2sim.rviz'])],
-        output='screen',
-    )
-
-    # 键盘控制（发布到 /cmd_vel，由桥接节点转换）
-    teleop_node = Node(
-        package='teleop_twist_keyboard',
-        executable='teleop_twist_keyboard',
-        name='teleop_twist_keyboard',
-        prefix='xterm -e',
-        output='screen',
-        parameters=[{
-            'use_sim_time': True,
-            'speed': 0.1,   # 线速度增量 (m/s)
-            'turn': 0.2,    # 角速度增量 (rad/s)
-        }],
-    )
-
     # 桥接节点：/cmd_vel → /ackermann_controller/reference_unstamped
     cmd_vel_bridge_node = Node(
         package='wuyang_description',
