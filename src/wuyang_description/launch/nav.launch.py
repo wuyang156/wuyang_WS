@@ -118,7 +118,7 @@ def generate_launch_description():
         executable='static_transform_publisher',
         name='static_tf_map_to_odom',
         arguments=[
-            '--x', '0.83',
+            '--x', '0.80',
             '--y', '0.5',
             '--z', '0.0',
             '--yaw', '-1.5708',  # 朝向 Y 轴负方向
